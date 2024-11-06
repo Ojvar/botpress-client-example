@@ -1,4 +1,5 @@
-import { Client } from "@botpress/client";
+import fs from "fs";
+import { Client, type ClientOutputs, type ListTablesResponse } from "@botpress/client";
 
 export type ConversationItem = any;
 export type ConversationItems = ConversationItem[];
@@ -45,5 +46,38 @@ export class BotpressClient {
 
   get_files(options: object = {}): Promise<{ files: object[]; meta: object }> {
     return this.client.listFiles(options);
+  }
+
+  async upload_file(
+    filename: string,
+    uploadFilename: string,
+    options: object = {},
+  ): Promise<ClientOutputs["uploadFile"]> {
+    // Define the file you want to upload
+    const filePath = filename;
+    const fileContent = fs.readFileSync(filePath, "utf8");
+
+    // Call the uploadFile method
+    return this.client.uploadFile({
+      key: uploadFilename,
+      content: fileContent,
+      ...options,
+    });
+  }
+
+  async list_tables(): Promise<ListTablesResponse> {
+    return this.client.listTables({});
+  }
+
+  async insert_row(
+    table_name: string,
+    user_rows: object[],
+    options: object = {},
+  ): Promise<object> {
+    return this.client.createTableRows({
+      table: table_name,
+      rows: user_rows,
+      ...options,
+    });
   }
 }

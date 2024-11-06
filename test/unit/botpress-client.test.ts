@@ -1,5 +1,5 @@
 import { test, expect, describe, beforeAll } from "bun:test";
-import { BotpressClient, type BotpressClientConfig } from "../../src/modules";
+import { BotpressClient } from "../../src/modules";
 import { get_config } from "../..";
 
 describe("Botpress Client Module", () => {
@@ -34,5 +34,33 @@ describe("Botpress Client Module", () => {
     const { files } = await client.get_files();
     console.debug({ files });
     expect(files).toBeArray();
+  });
+
+  test("Upload file", async () => {
+    const res = await client.upload_file(
+      "/home/eleven/Downloads/cover-letter-sample-1(CVRESUME-IR)-1.pdf",
+      "a1.xlsm",
+      {
+        tags: {
+          category: "Sales",
+          knowledgeBaseName: "Client Questions",
+        },
+      },
+    );
+    expect(res).toBeObject();
+  });
+
+  test("List tables", async () => {
+    const { tables } = await client.list_tables();
+    console.debug({ tables });
+    expect(tables).toBeArray();
+  });
+
+  test("Add rows to table", async () => {
+    const res = await client.insert_row("testTable", [
+      { name: "Row 1", description: "This is row 1" },
+      { name: "Row 2", description: "This is row 2" },
+    ]);
+    expect(res).toBeObject();
   });
 });
